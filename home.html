@@ -1,0 +1,32 @@
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script src="https://sdk.amazonaws.com/js/aws-sdk-2.4.5.min.js"></script>
+
+
+<div class="container">
+</div>
+
+<script>
+
+var capitalize = function(str) {
+  return str.replace(/\b\w/g, l => l.toUpperCase());
+};
+
+var galleryRegex = /(\/|images)/g
+
+var s3 = new AWS.S3({accessKeyId: 'XXXXXXXXXXXXXXXX',secretAccessKey: 'XXXXXXXXXXXXX'});
+
+var trips = {Bucket: "gabe-storage", Prefix: "images/", Delimiter: '/',StartAfter: 'images/' }
+
+s3.listObjectsV2(trips, function(err, data) {
+  if(err) {
+    console.log(err, err.stack)
+  } else {
+    $.each( data.CommonPrefixes, function (index, value) {
+      var galleryName = value.Prefix.replace(galleryRegex,"")
+	      $(".container").append("<h3>" + "<a href='/gallery.html?name=" + galleryName  + "'>" + capitalize(galleryName) + "</a></h3>");
+    });
+  }
+});
+</script>
